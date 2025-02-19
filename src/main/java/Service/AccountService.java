@@ -18,15 +18,13 @@ public class AccountService {
     }
 
     public Account userRegistration(Account account) throws SQLException{
-        /*try {
-            return this.accountDAO.NewUser(account);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }*/
         if (accountDAO.getUsername(account.getUsername()) == null){
             return this.accountDAO.NewUser(account);
         }
         return null;
+    }
+
+    public Account userLogin(Account account) throws SQLException{
+        return accountDAO.getLogin(account);
     }
 }

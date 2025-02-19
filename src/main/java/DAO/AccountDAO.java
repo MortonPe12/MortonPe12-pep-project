@@ -20,9 +20,9 @@ public class AccountDAO {
         preparedStatement.setString(1, account.username);
         preparedStatement.setString(2, account.password);
         preparedStatement.executeUpdate();
-        ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
-        if(pkeyResultSet.next()){
-            int generated_user_id = (int) pkeyResultSet.getInt(1);
+        ResultSet rs = preparedStatement.getGeneratedKeys();
+        if(rs.next()){
+            int generated_user_id = (int) rs.getInt(1);
             return new Account(generated_user_id, account.getUsername(), account.getPassword());
         }     
         return null;
@@ -39,6 +39,21 @@ public class AccountDAO {
                     rs.getString("password"));
             return account;
         }
+        return null;
+    }
+    public Account getLogin(Account account) throws SQLException{
+        Connection connection = ConnectionUtil.getConnection();
+        String sql = "SELECT * FROM account WHERE username = ? AND password = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, account.username);        
+        preparedStatement.setString(2, account.password);
+        ResultSet rs = preparedStatement.executeQuery();
+        while(rs.next()){
+            Account acc = new Account(rs.getInt("account_id"), 
+                    rs.getString("username"), 
+                    rs.getString("password"));
+            return acc;
+        }     
         return null;
     }
 }
