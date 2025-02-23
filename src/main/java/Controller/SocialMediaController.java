@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import Model.Account;
 import Service.AccountService;
+import Model.Message;
+import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -18,9 +20,12 @@ import io.javalin.http.Context;
  */
 public class SocialMediaController {
     AccountService accountService;
+    MessageService messageService;
     public SocialMediaController(){
         accountService = new AccountService();
+        messageService = new MessageService();
     }
+
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
@@ -30,6 +35,7 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
         app.post("/register", this::registrationHandler);
         app.post("/login", this::loginHandler);
+        app.post("/messages", this::messagePostHandler);
         return app;
     }
 
@@ -56,6 +62,17 @@ public class SocialMediaController {
             ctx.status(401);
         }else {
             ctx.json(mapper.writeValueAsString(accLogin));
+        }
+    }
+
+    private void messagePostHandler(Context ctx) throws JsonProcessingException, SQLException{
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(ctx.body(), Message.class);
+        Message post = messageService.createMessage(message);
+        if(post == null){
+            ctx.status(400);
+        }else {
+            ctx.json(mapper.writeValueAsString(post));
         }
     }
 }

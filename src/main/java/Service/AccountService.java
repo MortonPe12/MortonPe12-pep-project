@@ -13,7 +13,6 @@ public class AccountService {
     }
 
     public AccountService(AccountDAO accountDAO){
-
         this.accountDAO = accountDAO;
     }
 
