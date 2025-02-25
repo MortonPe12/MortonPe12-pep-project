@@ -29,7 +29,28 @@ public class MessageService {
         return this.messageDAO.getAllMessage();
     }
 
-    public Message getMessageID(int MessageID) throws SQLException{
-        return this.messageDAO.getMessageByID(MessageID);
+    public Message getMessageID(int messageID) throws SQLException{
+        return this.messageDAO.getMessageByID(messageID);
+    }
+
+    public Message delMessageID(int messageID) throws SQLException{
+        return this.messageDAO.delMessageByID(messageID);
+    }
+
+    public Message updateMessageID(Message message, int Id) throws SQLException{
+        if (message.message_text.length() > 255){
+            return null;
+        } else if (message.message_text.length() == 0){
+            return null;
+        }
+        if (this.messageDAO.getMessageByID(Id) == null){
+            return null;
+        }
+        this.messageDAO.updateMessage(message, Id);
+        return this.messageDAO.getMessageByID(Id);
+    }
+
+    public List<Message> getUserMessages(int UserId) throws SQLException{
+        return this.messageDAO.getAllMessageByUser(UserId);
     }
 }

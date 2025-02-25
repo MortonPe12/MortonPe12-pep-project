@@ -41,6 +41,9 @@ public class SocialMediaController {
         app.post("/messages", this::messagePostHandler);
         app.get("/messages", this::messageGetHandler);
         app.get("/messages/{message_id}", this::messageGetIDhandler);
+        app.delete("/messages/{message_id}", this::messageDelIDHandler);
+        app.patch("/messages/{message_id}", this::messagePatchHandler);
+        app.get("/accounts/{account_id}/messages", this::userMessagesHandler);
         return app;
     }
 
@@ -94,5 +97,32 @@ public class SocialMediaController {
         }else {
             ctx.json(post);
         }
+    }
+    private void messageDelIDHandler(Context ctx) throws JsonProcessingException, SQLException{
+        int id = Integer.parseInt(ctx.pathParam("message_id"));
+        Message delPost = messageService.delMessageID(id);
+        if (delPost == null){
+            ctx.status(200);
+        }else {
+            ctx.json(delPost);
+        }
+    }
+
+    private void messagePatchHandler(Context ctx) throws JsonProcessingException, SQLException{
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(ctx.body(), Message.class);
+        int id = Integer.parseInt(ctx.pathParam("message_id"));
+        Message updatedPost = messageService.updateMessageID(message, id);
+        if (updatedPost == null){
+            ctx.status(400);
+        } else {
+            ctx.json(mapper.writeValueAsString(updatedPost));
+        }
+    }
+
+    private void userMessagesHandler(Context ctx) throws JsonProcessingException, SQLException{
+        int userId = Integer.parseInt(ctx.pathParam("account_id"));
+        List<Message> userPosts = messageService.getUserMessages(userId);
+        ctx.json(userPosts);
     }
 }
