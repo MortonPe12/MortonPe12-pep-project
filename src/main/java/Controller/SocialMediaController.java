@@ -2,6 +2,9 @@ package Controller;
 
 import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +39,8 @@ public class SocialMediaController {
         app.post("/register", this::registrationHandler);
         app.post("/login", this::loginHandler);
         app.post("/messages", this::messagePostHandler);
+        app.get("/messages", this::messageGetHandler);
+        app.get("/messages/{message_id}", this::messageGetIDhandler);
         return app;
     }
 
@@ -73,6 +78,21 @@ public class SocialMediaController {
             ctx.status(400);
         }else {
             ctx.json(mapper.writeValueAsString(post));
+        }
+    }
+
+    private void messageGetHandler(Context ctx) throws JsonProcessingException, SQLException{
+        List<Message> post = messageService.getMessages();
+        ctx.json(post);
+    }
+
+    private void messageGetIDhandler(Context ctx) throws JsonProcessingException, SQLException{
+        int id = Integer.parseInt(ctx.pathParam("message_id"));
+        Message post = messageService.getMessageID(id);
+        if (post == null){
+            ctx.status(200);
+        }else {
+            ctx.json(post);
         }
     }
 }

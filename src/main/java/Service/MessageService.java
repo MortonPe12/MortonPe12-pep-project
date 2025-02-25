@@ -4,6 +4,8 @@ import DAO.MessageDAO;
 import Model.Message;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MessageService {
     MessageDAO messageDAO;
@@ -21,5 +23,13 @@ public class MessageService {
             return null;
         }
         return this.messageDAO.newMessage(message);
+    }
+
+    public List<Message> getMessages() throws SQLException{
+        return this.messageDAO.getAllMessage();
+    }
+
+    public Message getMessageID(int MessageID) throws SQLException{
+        return this.messageDAO.getMessageByID(MessageID);
     }
 }
